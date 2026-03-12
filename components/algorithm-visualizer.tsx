@@ -90,19 +90,30 @@ export function AlgorithmVisualizer({ category, algorithm }: AlgorithmVisualizer
   const [statusMessage, setStatusMessage] = useState("Ready to start");
   const [statusType, setStatusType] = useState<"info" | "success" | "warning" | "error">("info");
 
-  // Sorting state
-  const [array, setArray] = useState<number[]>(() => generateRandomArray(15));
+  // Sorting state - initialize empty to avoid hydration mismatch
+  const [array, setArray] = useState<number[]>([]);
   const [arraySize, setArraySize] = useState(15);
   const [highlightedIndices, setHighlightedIndices] = useState<number[]>([]);
   const [sortedIndices, setSortedIndices] = useState<number[]>([]);
   const [comparingIndices, setComparingIndices] = useState<number[]>([]);
   const [pivotIndex, setPivotIndex] = useState<number | undefined>();
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Search state
+  // Search state - initialize empty to avoid hydration mismatch
   const [searchTarget, setSearchTarget] = useState(50);
-  const [searchArray, setSearchArray] = useState<number[]>(() =>
-    generateRandomArray(12).sort((a, b) => a - b)
-  );
+  const [searchArray, setSearchArray] = useState<number[]>([]);
+
+  // Initialize arrays on client-side only to prevent hydration mismatch
+  useEffect(() => {
+    if (!isInitialized) {
+      setArray(generateRandomArray(15));
+      const newSearchArray = generateRandomArray(12).sort((a, b) => a - b);
+      setSearchArray(newSearchArray);
+      setSearchTarget(newSearchArray[Math.floor(Math.random() * newSearchArray.length)]);
+      setSearchRange([0, newSearchArray.length - 1]);
+      setIsInitialized(true);
+    }
+  }, [isInitialized]);
   const [foundIndex, setFoundIndex] = useState<number | undefined>();
   const [searchRange, setSearchRange] = useState<[number, number]>([0, 11]);
   const [midIndices, setMidIndices] = useState<number[]>([]);
