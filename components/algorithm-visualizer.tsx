@@ -53,34 +53,71 @@ function generateRandomArray(size: number, max: number = 100): number[] {
 }
 
 const ALGORITHM_NAMES: Record<string, string> = {
+  // Sorting
   bubble: "Bubble Sort",
   selection: "Selection Sort",
   insertion: "Insertion Sort",
   merge: "Merge Sort",
   quick: "Quick Sort",
   heap: "Heap Sort",
+  counting: "Counting Sort",
+  radix: "Radix Sort",
+  bucket: "Bucket Sort",
+  // Searching
   linear: "Linear Search",
   binary: "Binary Search",
   ternary: "Ternary Search",
+  // Graph
   bfs: "Breadth First Search",
   dfs: "Depth First Search",
   dijkstra: "Dijkstra's Algorithm",
+  bellmanFord: "Bellman-Ford Algorithm",
+  floydWarshall: "Floyd-Warshall Algorithm",
   kruskal: "Kruskal's MST",
   prim: "Prim's MST",
+  topological: "Topological Sort",
+  detectCycle: "Cycle Detection",
+  // Tree
   inorder: "Inorder Traversal",
   preorder: "Preorder Traversal",
   postorder: "Postorder Traversal",
   levelOrder: "Level Order Traversal",
+  bstInsert: "BST Insertion",
+  bstDelete: "BST Deletion",
+  avlRotation: "AVL Rotations",
+  lca: "Lowest Common Ancestor",
+  // DP
   fibonacci: "Fibonacci",
   knapsack: "0/1 Knapsack",
   lcs: "Longest Common Subsequence",
+  lis: "Longest Increasing Subsequence",
   coinChange: "Coin Change",
+  matrixChain: "Matrix Chain Multiplication",
+  // Backtracking
   nQueens: "N-Queens",
+  sudoku: "Sudoku Solver",
   permutations: "Permutations",
   subsetGeneration: "Subset Generation",
+  // Greedy
+  activitySelection: "Activity Selection",
+  huffman: "Huffman Coding",
+  fractionalKnapsack: "Fractional Knapsack",
+  jobScheduling: "Job Scheduling",
+  // Data Structures
+  arrayOps: "Array Operations",
+  linkedListOps: "Linked List Operations",
+  stackOps: "Stack Operations",
+  queueOps: "Queue Operations",
+  heapOps: "Heap Operations",
 };
 
+// Default static arrays to avoid hydration mismatch
+const DEFAULT_ARRAY = [50, 30, 70, 20, 60, 40, 80, 10, 90, 35, 55, 25, 75, 45, 65];
+const DEFAULT_SEARCH_ARRAY = [10, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 90];
+
 export function AlgorithmVisualizer({ category, algorithm }: AlgorithmVisualizerProps) {
+  const [isInitialized, setIsInitialized] = useState(false);
+  
   // Common state
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -90,19 +127,17 @@ export function AlgorithmVisualizer({ category, algorithm }: AlgorithmVisualizer
   const [statusMessage, setStatusMessage] = useState("Ready to start");
   const [statusType, setStatusType] = useState<"info" | "success" | "warning" | "error">("info");
 
-  // Sorting state
-  const [array, setArray] = useState<number[]>(() => generateRandomArray(15));
+  // Sorting state - use static default for SSR
+  const [array, setArray] = useState<number[]>(DEFAULT_ARRAY);
   const [arraySize, setArraySize] = useState(15);
   const [highlightedIndices, setHighlightedIndices] = useState<number[]>([]);
   const [sortedIndices, setSortedIndices] = useState<number[]>([]);
   const [comparingIndices, setComparingIndices] = useState<number[]>([]);
   const [pivotIndex, setPivotIndex] = useState<number | undefined>();
 
-  // Search state
+  // Search state - use static default for SSR
   const [searchTarget, setSearchTarget] = useState(50);
-  const [searchArray, setSearchArray] = useState<number[]>(() =>
-    generateRandomArray(12).sort((a, b) => a - b)
-  );
+  const [searchArray, setSearchArray] = useState<number[]>(DEFAULT_SEARCH_ARRAY);
   const [foundIndex, setFoundIndex] = useState<number | undefined>();
   const [searchRange, setSearchRange] = useState<[number, number]>([0, 11]);
   const [midIndices, setMidIndices] = useState<number[]>([]);
@@ -121,6 +156,17 @@ export function AlgorithmVisualizer({ category, algorithm }: AlgorithmVisualizer
       mstEdges: [],
     };
   });
+  
+  // Initialize with random data after hydration
+  useEffect(() => {
+    if (!isInitialized) {
+      setArray(generateRandomArray(arraySize));
+      const newSearchArray = generateRandomArray(12).sort((a, b) => a - b);
+      setSearchArray(newSearchArray);
+      setSearchTarget(newSearchArray[Math.floor(Math.random() * newSearchArray.length)]);
+      setIsInitialized(true);
+    }
+  }, [isInitialized, arraySize]);
 
   // Tree state
   const [treeState, setTreeState] = useState<TreeState>({

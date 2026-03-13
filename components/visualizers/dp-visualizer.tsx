@@ -21,10 +21,10 @@ export function DPVisualizer({
 }: DPVisualizerProps) {
   const getCellClass = (row: number, col: number) => {
     if (currentCell && currentCell[0] === row && currentCell[1] === col) {
-      return "bg-[oklch(var(--algo-current))] text-primary-foreground";
+      return "bg-sky-500 text-white";
     }
     if (highlightedCells.some(([r, c]) => r === row && c === col)) {
-      return "bg-[oklch(var(--algo-comparing))] text-primary-foreground";
+      return "bg-amber-400 text-black";
     }
     return "bg-secondary";
   };
@@ -35,9 +35,17 @@ export function DPVisualizer({
     return value.toString();
   };
 
+  if (!table || table.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+        No data to visualize
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-4 p-4 overflow-auto">
-      <div className="overflow-auto max-w-full">
+      <div className="overflow-auto max-w-full max-h-[60vh]">
         <table className="border-collapse">
           {colLabels && (
             <thead>
@@ -46,7 +54,7 @@ export function DPVisualizer({
                 {colLabels.map((label, i) => (
                   <th
                     key={i}
-                    className="p-2 text-xs text-muted-foreground font-mono"
+                    className="p-2 text-xs text-muted-foreground font-mono sticky top-0 bg-background"
                   >
                     {label}
                   </th>
@@ -58,7 +66,7 @@ export function DPVisualizer({
             {table.map((row, rowIdx) => (
               <tr key={rowIdx}>
                 {rowLabels && (
-                  <td className="p-2 text-xs text-muted-foreground font-mono">
+                  <td className="p-2 text-xs text-muted-foreground font-mono sticky left-0 bg-background">
                     {rowLabels[rowIdx]}
                   </td>
                 )}
@@ -90,11 +98,11 @@ export function DPVisualizer({
 
       <div className="flex gap-4 text-xs mt-2">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-[oklch(var(--algo-current))]" />
+          <div className="w-4 h-4 rounded bg-sky-500" />
           <span className="text-muted-foreground">Current Cell</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-[oklch(var(--algo-comparing))]" />
+          <div className="w-4 h-4 rounded bg-amber-400" />
           <span className="text-muted-foreground">Looking Up</span>
         </div>
       </div>

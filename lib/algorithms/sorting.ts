@@ -764,4 +764,216 @@ void heapSort(int arr[], int n) {
     }
 }`,
   },
+  counting: {
+    python: `def counting_sort(arr):
+    if not arr:
+        return arr
+    max_val = max(arr)
+    count = [0] * (max_val + 1)
+    
+    for num in arr:
+        count[num] += 1
+    
+    result = []
+    for i, c in enumerate(count):
+        result.extend([i] * c)
+    
+    return result`,
+    javascript: `function countingSort(arr) {
+  if (arr.length === 0) return arr;
+  const max = Math.max(...arr);
+  const count = new Array(max + 1).fill(0);
+  
+  for (const num of arr) {
+    count[num]++;
+  }
+  
+  const result = [];
+  for (let i = 0; i <= max; i++) {
+    while (count[i] > 0) {
+      result.push(i);
+      count[i]--;
+    }
+  }
+  
+  return result;
+}`,
+    cpp: `void countingSort(int arr[], int n) {
+    int max = *max_element(arr, arr + n);
+    vector<int> count(max + 1, 0);
+    
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+    
+    int idx = 0;
+    for (int i = 0; i <= max; i++) {
+        while (count[i] > 0) {
+            arr[idx++] = i;
+            count[i]--;
+        }
+    }
+}`,
+  },
+  radix: {
+    python: `def radix_sort(arr):
+    if not arr:
+        return arr
+    max_val = max(arr)
+    exp = 1
+    
+    while max_val // exp > 0:
+        counting_sort_by_digit(arr, exp)
+        exp *= 10
+    
+    return arr
+
+def counting_sort_by_digit(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+    
+    for i in range(n):
+        digit = (arr[i] // exp) % 10
+        count[digit] += 1
+    
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+    
+    for i in range(n - 1, -1, -1):
+        digit = (arr[i] // exp) % 10
+        output[count[digit] - 1] = arr[i]
+        count[digit] -= 1
+    
+    for i in range(n):
+        arr[i] = output[i]`,
+    javascript: `function radixSort(arr) {
+  if (arr.length === 0) return arr;
+  const max = Math.max(...arr);
+  
+  for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+    countingSortByDigit(arr, exp);
+  }
+  
+  return arr;
+}
+
+function countingSortByDigit(arr, exp) {
+  const n = arr.length;
+  const output = new Array(n).fill(0);
+  const count = new Array(10).fill(0);
+  
+  for (let i = 0; i < n; i++) {
+    const digit = Math.floor(arr[i] / exp) % 10;
+    count[digit]++;
+  }
+  
+  for (let i = 1; i < 10; i++) {
+    count[i] += count[i - 1];
+  }
+  
+  for (let i = n - 1; i >= 0; i--) {
+    const digit = Math.floor(arr[i] / exp) % 10;
+    output[count[digit] - 1] = arr[i];
+    count[digit]--;
+  }
+  
+  for (let i = 0; i < n; i++) {
+    arr[i] = output[i];
+  }
+}`,
+    cpp: `void countingSortByDigit(int arr[], int n, int exp) {
+    int output[n];
+    int count[10] = {0};
+    
+    for (int i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+    
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+    
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}
+
+void radixSort(int arr[], int n) {
+    int max = *max_element(arr, arr + n);
+    
+    for (int exp = 1; max / exp > 0; exp *= 10) {
+        countingSortByDigit(arr, n, exp);
+    }
+}`,
+  },
+  bucket: {
+    python: `def bucket_sort(arr):
+    if not arr:
+        return arr
+    
+    min_val, max_val = min(arr), max(arr)
+    bucket_count = len(arr)
+    bucket_range = (max_val - min_val) / bucket_count + 1
+    
+    buckets = [[] for _ in range(bucket_count)]
+    
+    for num in arr:
+        index = int((num - min_val) / bucket_range)
+        buckets[index].append(num)
+    
+    for bucket in buckets:
+        bucket.sort()
+    
+    result = []
+    for bucket in buckets:
+        result.extend(bucket)
+    
+    return result`,
+    javascript: `function bucketSort(arr) {
+  if (arr.length === 0) return arr;
+  
+  const min = Math.min(...arr);
+  const max = Math.max(...arr);
+  const bucketCount = arr.length;
+  const bucketRange = (max - min) / bucketCount + 1;
+  
+  const buckets = Array.from({ length: bucketCount }, () => []);
+  
+  for (const num of arr) {
+    const index = Math.floor((num - min) / bucketRange);
+    buckets[index].push(num);
+  }
+  
+  for (const bucket of buckets) {
+    bucket.sort((a, b) => a - b);
+  }
+  
+  return buckets.flat();
+}`,
+    cpp: `void bucketSort(float arr[], int n) {
+    vector<float> buckets[n];
+    
+    for (int i = 0; i < n; i++) {
+        int bi = n * arr[i];
+        buckets[bi].push_back(arr[i]);
+    }
+    
+    for (int i = 0; i < n; i++) {
+        sort(buckets[i].begin(), buckets[i].end());
+    }
+    
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        for (float val : buckets[i]) {
+            arr[index++] = val;
+        }
+    }
+}`,
+  },
 };

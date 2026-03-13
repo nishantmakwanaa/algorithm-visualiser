@@ -21,55 +21,85 @@ export function ArrayVisualizer({
   pivotIndex,
   maxValue,
   showValues = true,
-  stepType,
 }: ArrayVisualizerProps) {
   const max = maxValue || Math.max(...array, 1);
   
   const getBarColor = (index: number) => {
     if (sortedIndices.includes(index)) {
-      return "bg-[oklch(var(--algo-sorted))]";
+      return "bg-emerald-500";
     }
     if (pivotIndex === index) {
-      return "bg-[oklch(var(--algo-pivot))]";
+      return "bg-pink-500";
     }
     if (comparingIndices.includes(index)) {
-      return "bg-[oklch(var(--algo-comparing))]";
+      return "bg-amber-400";
     }
     if (highlightedIndices.includes(index)) {
-      if (stepType === "swap" || stepType === "swapping") {
-        return "bg-[oklch(var(--algo-swapping))]";
-      }
-      return "bg-[oklch(var(--algo-current))]";
+      return "bg-rose-500";
     }
-    return "bg-primary/40";
+    return "bg-sky-500/60";
   };
 
+  if (!array || array.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+        No data to visualize
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-full flex items-end justify-center gap-1 p-4">
-      {array.map((value, index) => {
-        const height = (value / max) * 100;
-        const barColor = getBarColor(index);
-        
-        return (
-          <div
-            key={index}
-            className="flex flex-col items-center gap-1 flex-1 min-w-[20px] max-w-[60px]"
-          >
+    <div className="w-full h-full flex flex-col p-4">
+      <div className="flex-1 flex items-end justify-center gap-1 min-h-[200px]">
+        {array.map((value, index) => {
+          const height = (value / max) * 100;
+          const barColor = getBarColor(index);
+          
+          return (
             <div
-              className={cn(
-                "w-full rounded-t-sm transition-all duration-200",
-                barColor
+              key={index}
+              className="flex flex-col items-center gap-1 flex-1 min-w-[20px] max-w-[60px]"
+            >
+              <div className="flex-1 w-full flex items-end">
+                <div
+                  className={cn(
+                    "w-full rounded-t-sm transition-all duration-200",
+                    barColor
+                  )}
+                  style={{ height: `${Math.max(height, 5)}%` }}
+                />
+              </div>
+              {showValues && array.length <= 20 && (
+                <span className="text-xs text-muted-foreground font-mono">
+                  {value}
+                </span>
               )}
-              style={{ height: `${Math.max(height, 5)}%` }}
-            />
-            {showValues && array.length <= 20 && (
-              <span className="text-xs text-muted-foreground font-mono">
-                {value}
-              </span>
-            )}
-          </div>
-        );
-      })}
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex justify-center gap-4 text-xs mt-4 pt-4 border-t border-border">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-sky-500/60" />
+          <span className="text-muted-foreground">Unsorted</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-amber-400" />
+          <span className="text-muted-foreground">Comparing</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-rose-500" />
+          <span className="text-muted-foreground">Swapping</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-pink-500" />
+          <span className="text-muted-foreground">Pivot</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-emerald-500" />
+          <span className="text-muted-foreground">Sorted</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -97,31 +127,39 @@ export function SearchVisualizer({
 }: SearchVisualizerProps) {
   const getBarColor = (index: number) => {
     if (foundIndex === index) {
-      return "bg-[oklch(var(--algo-sorted))]";
+      return "bg-emerald-500 ring-2 ring-emerald-400 ring-offset-2 ring-offset-background";
     }
     if (midIndices.includes(index)) {
-      return "bg-[oklch(var(--algo-pivot))]";
+      return "bg-pink-500";
     }
     if (searchIndices.includes(index)) {
-      return "bg-[oklch(var(--algo-current))]";
+      return "bg-sky-500";
     }
     if (eliminated.includes(index)) {
-      return "bg-muted/30";
+      return "bg-muted/30 text-muted-foreground/50";
     }
     if (index >= rangeStart && index <= rangeEnd) {
-      return "bg-primary/40";
+      return "bg-sky-500/40";
     }
-    return "bg-muted/30";
+    return "bg-muted/30 text-muted-foreground/50";
   };
+
+  if (!array || array.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+        No data to visualize
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col gap-4 p-4">
       <div className="text-center">
         <span className="text-sm text-muted-foreground">
-          Searching for: <span className="text-primary font-bold">{target}</span>
+          Searching for: <span className="text-primary font-bold text-lg">{target}</span>
         </span>
       </div>
-      <div className="flex-1 flex items-center justify-center gap-2">
+      <div className="flex-1 flex items-center justify-center gap-2 flex-wrap">
         {array.map((value, index) => {
           const barColor = getBarColor(index);
           
@@ -129,9 +167,8 @@ export function SearchVisualizer({
             <div
               key={index}
               className={cn(
-                "flex items-center justify-center px-4 py-3 rounded-lg font-mono text-sm transition-all duration-200",
-                barColor,
-                foundIndex === index && "ring-2 ring-[oklch(var(--algo-sorted))] ring-offset-2 ring-offset-background"
+                "flex items-center justify-center px-4 py-3 rounded-lg font-mono text-sm transition-all duration-200 min-w-[50px]",
+                barColor
               )}
             >
               {value}
@@ -139,18 +176,26 @@ export function SearchVisualizer({
           );
         })}
       </div>
-      <div className="flex justify-center gap-4 text-xs">
+      <div className="flex justify-center gap-4 text-xs pt-4 border-t border-border">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-[oklch(var(--algo-current))]" />
+          <div className="w-3 h-3 rounded bg-sky-500/40" />
+          <span className="text-muted-foreground">Search Range</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-sky-500" />
           <span className="text-muted-foreground">Current</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-[oklch(var(--algo-pivot))]" />
+          <div className="w-3 h-3 rounded bg-pink-500" />
           <span className="text-muted-foreground">Mid Point</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-[oklch(var(--algo-sorted))]" />
+          <div className="w-3 h-3 rounded bg-emerald-500" />
           <span className="text-muted-foreground">Found</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-muted/30" />
+          <span className="text-muted-foreground">Eliminated</span>
         </div>
       </div>
     </div>
