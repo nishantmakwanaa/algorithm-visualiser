@@ -53,31 +53,62 @@ function generateRandomArray(size: number, max: number = 100): number[] {
 }
 
 const ALGORITHM_NAMES: Record<string, string> = {
+  // Sorting
   bubble: "Bubble Sort",
   selection: "Selection Sort",
   insertion: "Insertion Sort",
   merge: "Merge Sort",
   quick: "Quick Sort",
   heap: "Heap Sort",
+  counting: "Counting Sort",
+  radix: "Radix Sort",
+  bucket: "Bucket Sort",
+  // Searching
   linear: "Linear Search",
   binary: "Binary Search",
   ternary: "Ternary Search",
+  // Graph
   bfs: "Breadth First Search",
   dfs: "Depth First Search",
   dijkstra: "Dijkstra's Algorithm",
+  bellmanFord: "Bellman-Ford Algorithm",
+  floydWarshall: "Floyd-Warshall Algorithm",
   kruskal: "Kruskal's MST",
   prim: "Prim's MST",
+  topological: "Topological Sort",
+  detectCycle: "Cycle Detection",
+  // Tree
   inorder: "Inorder Traversal",
   preorder: "Preorder Traversal",
   postorder: "Postorder Traversal",
   levelOrder: "Level Order Traversal",
+  bstInsert: "BST Insertion",
+  bstDelete: "BST Deletion",
+  avlRotation: "AVL Rotations",
+  lca: "Lowest Common Ancestor",
+  // DP
   fibonacci: "Fibonacci",
   knapsack: "0/1 Knapsack",
   lcs: "Longest Common Subsequence",
+  lis: "Longest Increasing Subsequence",
   coinChange: "Coin Change",
+  matrixChain: "Matrix Chain Multiplication",
+  // Backtracking
   nQueens: "N-Queens",
+  sudoku: "Sudoku Solver",
   permutations: "Permutations",
   subsetGeneration: "Subset Generation",
+  // Greedy
+  activitySelection: "Activity Selection",
+  huffman: "Huffman Coding",
+  fractionalKnapsack: "Fractional Knapsack",
+  jobScheduling: "Job Scheduling",
+  // Data Structures
+  arrayOps: "Array Operations",
+  linkedListOps: "Linked List Operations",
+  stackOps: "Stack Operations",
+  queueOps: "Queue Operations",
+  heapOps: "Heap Operations",
 };
 
 // Default static arrays to avoid hydration mismatch
